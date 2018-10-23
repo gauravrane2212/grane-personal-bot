@@ -1,0 +1,22 @@
+{
+  "name": "grane-personal-bot-server",
+  "version": "0.0.1",
+  "description": "server for my personal bot",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "server",
+    "telegram"
+  ],
+  "author": "grane",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.4"
+  }
+}
