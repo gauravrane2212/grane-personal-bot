@@ -1,9 +1,12 @@
 const express = require('express')
+const path = require('path')
 
 const app = express()
 const cors = require('cors')
 
 app.use(cors())
+
+app.use(express.static(path.join(__dirname, '../../dist')))
 
 app.get('/moodData', (req, res) => {
     res.send(
@@ -21,4 +24,7 @@ app.get('/moodData', (req, res) => {
       }]
     )
   })
-app.listen(process.env.PORT || 8081)
+
+var port = process.env.PORT || 8080
+app.listen(port)
+console.log('App listening on port ' + port)
