@@ -1,10 +1,12 @@
-const express = require('express')
-const path = require('path')
-const cors = require('cors')
-const Telegraf = require('telegraf')
-const Markup = require('telegraf/markup')
+import express from 'express'
+import path from 'path'
+import cors from 'cors'
+import dotEnv from 'dotenv'
 // Load env vars from .env file into process.env
-require('dotenv').config()
+dotEnv.config()
+
+import Telegraf from 'telegraf'
+import Markup from 'telegraf/markup'
 
 const MoodEnum = {
   WORRIED: 'Worried 😟',
@@ -47,10 +49,12 @@ bot.hears(MoodEnumArrayValues, (ctx) => {
       break
   }
   // TODO: Save the mood info in a database
+  console.log(ctx.match);
 })
 
 // NOTE: Change this to the ngrok one for testing locally.
 const webhookPath = 'https://grane-personal-bot.herokuapp.com/' + process.env.TELEGRAM_TOKEN 
+// const webhookPath = 'https://651eda18.ngrok.io/' + process.env.TELEGRAM_TOKEN
 bot.telegram.setWebhook(webhookPath);
 
 const app = express()
