@@ -1,0 +1,4 @@
+#! /app/bin/node
+var captureMood = require(../src/server/index.js);
+captureMood();
+process.exit();
