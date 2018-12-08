@@ -28,10 +28,6 @@ export default class MoodHandler {
         return this.bot.webhookCallback('/' + this.token);
     }
 
-    sendMoodQuestion() {
-        this.bot.telegram.sendMessage('659887963', 'Let\'s check in how are you feeling now, shall we?');
-    }
-
     sendInitialMoodReply() {
         this.bot.command('mood', (ctx) => ctx.reply('Select one that responds to your mood...', Markup.keyboard([
             [MoodEnum.WORRIED, MoodEnum.NEUTRAL],
