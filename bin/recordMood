@@ -1,4 +1,3 @@
 #! /app/.heroku/node/bin/node
-var captureMood = require(../src/server/index.js);
-captureMood();
+var app = require('../src/server/start.js');
 process.exit();

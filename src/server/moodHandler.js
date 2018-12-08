@@ -29,7 +29,11 @@ export default class MoodHandler {
     }
 
     sendMoodQuestion() {
-        this.bot.command('mood', (ctx) => ctx.reply('Let\'s check in how are you feeling now, shall we?', Markup.keyboard([
+        this.bot.telegram.sendMessage('659887963', 'Let\'s check in how are you feeling now, shall we?');
+    }
+
+    sendInitialMoodReply() {
+        this.bot.command('mood', (ctx) => ctx.reply('Select one that responds to your mood...', Markup.keyboard([
             [MoodEnum.WORRIED, MoodEnum.NEUTRAL],
             [MoodEnum.SICK,  MoodEnum.HAPPY],
             [MoodEnum.DEPRESSED, MoodEnum.EXCITED]])
