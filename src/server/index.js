@@ -9,12 +9,9 @@ import MoodHandler from './moodHandler.js';
 
 const handler = new MoodHandler(process.env.TELEGRAM_TOKEN);
 handler.setupWebhook();
-captureMood();
+handler.sendMoodQuestion();
+handler.sendInitialMoodReply();
 handler.recordMood();
-
-export default function captureMood() {
-  handler.sendMoodQuestion();
-}
 
 const app = express()
 app.use(cors())
