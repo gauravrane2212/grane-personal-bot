@@ -1,3 +1,11 @@
 #! /app/.heroku/node/bin/node
-var app = require('../src/server/start.js');
+
+var Telegraf = require('telegraf');
+
+function sendMoodQuestion() {
+    var bot = new Telegraf('580322195:AAHCcfq2M7TYhBos14R1Kl3FEjzrbo0EUrg');
+    bot.telegram.sendMessage('659887963', 'Let\'s check in how are you feeling now, shall we?');
+}
+
+sendMoodQuestion();
 process.exit();
