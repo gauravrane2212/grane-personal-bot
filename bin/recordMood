@@ -1,11 +1,14 @@
 #! /app/.heroku/node/bin/node
 
-var Telegraf = require('telegraf');
+const Telegram = require('telegraf/telegram')
+const dotEnv = require('dotenv')
+// Load env vars from .env file into process.env
+dotEnv.config()
 
-function sendMoodQuestion() {
-    var bot = new Telegraf('580322195:AAHCcfq2M7TYhBos14R1Kl3FEjzrbo0EUrg');
-    bot.telegram.sendMessage('659887963', 'Let\'s check in how are you feeling now, shall we?');
+async function sendMoodQuestion() {
+    const bot = new Telegram(process.env.TELEGRAM_TOKEN);
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Let\'s check in how are you feeling now, shall we?');
+    process.exit();
 }
 
 sendMoodQuestion();
-process.exit();
