@@ -17,22 +17,14 @@ app.use(cors())
 app.use(express.static(path.join(__dirname, '../../dist')))
 
 app.get('/moodData', (req, res) => {
-    res.send(
-      [{
-        title: "Sunday, October 21, 2018 - Morning",
-        description: "Happy"
-      },
-      {
-        title: "Sunday, October 21, 2018 - Noon",
-        description: "Normal"
-      },
-      {
-        title: "Sunday, October 21, 2018 - Evening",
-        description: "Tensed"
-      }]
-    )
-  }
-)
+  handler.fetchMoodDataFromDatabase()
+    .catch(err => console.log(err))
+    .then(response => {
+      console.log(response.rows);
+      res.send(response.rows);
+      handler.disconnectDatabase();
+    }); 
+})
 
 app.use(handler.getWebhookCallback());
 

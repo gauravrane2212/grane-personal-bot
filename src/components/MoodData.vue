@@ -9,9 +9,9 @@
         <th>Date/Time</th>
         <th>Mood</th> 
     </tr>
-    <tr v-for="mood in data" :key="mood.title">
-        <td>{{ mood.title }}</td>
-        <td>{{ mood.description }}</td>
+    <tr v-for="mood in data" :key="mood.timestamp">
+        <td>{{ mood.timestamp }}</td>
+        <td>{{ mood.mood }}</td>
     </tr>
     </table>
   </div>
@@ -22,8 +22,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import ApiService from '@/services/ApiService';
 
 interface Mood {
-    title: string;
-    description: string;
+    timestamp: string;
+    mood: string;
 }
 
 @Component

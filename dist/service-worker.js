@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.8d1e407221d02eaec14cda5e279aabfb.js"
+  "/precache-manifest.2e2308e074af2b1b1a02125d9612dfc7.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "grane-personal-bot"});
