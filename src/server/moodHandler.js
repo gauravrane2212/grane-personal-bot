@@ -1,5 +1,6 @@
 import Telegraf from 'telegraf'
 import Markup from 'telegraf/markup'
+import Session from 'telegraf/session'
 import { DateTime } from "luxon";
 const { Client } = require('pg');
 
@@ -36,6 +37,7 @@ export default class MoodHandler {
     constructor(telegram_token){
         this.token = telegram_token;
         this.bot = new Telegraf(this.token);
+        this.bot.use(Session());
         this.database_client = this.connectDatabase();
     }
 
@@ -64,7 +66,35 @@ export default class MoodHandler {
         this.bot.hears(MoodObjectLabelArray, (ctx) => {
             switch(ctx.match) {
                 case MoodObject.Excited.label:
-                    ctx.reply('Can\`t wait to hear what\`s new with you 😎 All the best!', Markup.removeKeyboard().extra())
+                    ctx.reply('Awesome News! What\'s new yo?', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Happy.label:
+                    ctx.reply('Me likey it 😍 What\'s up with you, happy buoy?', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Normal.label:
+                    ctx.reply('Nice, anything I need to know?', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Anxious.label:
+                    ctx.reply('Awww!!! What\'s making you so uneasy?', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Stressed.label:
+                    ctx.reply('Keep calm! Keep writing, I am listening, Ok?', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Sick.label:
+                    ctx.reply('That\'s a bummer! What\'s the status now?', Markup.removeKeyboard().extra())
+                    break
+            }
+            ctx.session.mood = ctx.match;
+        })
+    }
+
+    askReason() {
+        this.bot.on('text', (ctx) => {
+            console.log(ctx.update.message.text);
+            const mood = ctx.session.mood;
+            switch(mood) {
+                case MoodObject.Excited.label:
+                    ctx.reply('Now that\'s what I love to hear about you! Keep it rocking, man!', Markup.removeKeyboard().extra())
                     break
                 case MoodObject.Happy.label:
                     ctx.reply('Wohoooo! That\'s great to hear. Keep spreading the smiles 🎉', Markup.removeKeyboard().extra())
@@ -82,8 +112,8 @@ export default class MoodHandler {
                     ctx.reply('Drink plenty of fluids and take some rest. Get well soon 💪🏼', Markup.removeKeyboard().extra())
                     break
             }
-            this.saveMoodToDatabase(ctx.match);
-        })
+            this.saveMoodToDatabase(mood);
+        });
     }
 
     saveMoodToDatabase(mood) {
