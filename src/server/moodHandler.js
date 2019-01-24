@@ -3,15 +3,34 @@ import Markup from 'telegraf/markup'
 import { DateTime } from "luxon";
 const { Client } = require('pg');
 
-const MoodEnum = {
-  WORRIED: 'Worried 😟',
-  NEUTRAL: 'Neutral 😐',
-  SICK: 'Sick 🤮',
-  HAPPY: 'Happy 🤠',
-  DEPRESSED: 'Depressed 😵',
-  EXCITED: 'Excited 🤩',
-}
-const MoodEnumArrayValues = Object.keys(MoodEnum).map((mood) => MoodEnum[mood])
+const MoodObject = {
+    Excited: {
+        label: 'Excited 🤩',
+        value: 6,
+    },
+    Happy: {
+        label: 'Happy 🤠',
+        value: 5,
+    },
+    Normal: {
+        label: 'Normal 😐',
+        value: 4,
+    },
+    Anxious: {
+        label: 'Anxious 😓',
+        value: 3,
+    },
+    Stressed: {
+        label: 'Stressed 🤯',
+        value: 2,
+    },
+    Sick: {
+        label: 'Sick 🤮',
+        value: 1,
+    },
+};
+
+const MoodObjectLabelArray = Object.keys(MoodObject).map((mood) => MoodObject[mood].label);
 
 export default class MoodHandler {
     constructor(telegram_token){
@@ -33,38 +52,36 @@ export default class MoodHandler {
 
     sendInitialMoodReply() {
         this.bot.command('mood', (ctx) => ctx.reply('Select one that responds to your mood...', Markup.keyboard([
-            [MoodEnum.WORRIED, MoodEnum.NEUTRAL],
-            [MoodEnum.SICK,  MoodEnum.HAPPY],
-            [MoodEnum.DEPRESSED, MoodEnum.EXCITED]])
+            [MoodObject.Excited.label, MoodObject.Happy.label],
+            [MoodObject.Normal.label,  MoodObject.Anxious.label],
+            [MoodObject.Stressed.label, MoodObject.Sick.label]])
             .oneTime()
             .resize()
             .extra()))
     }
 
     recordMood() {
-        this.bot.hears(MoodEnumArrayValues, (ctx) => {
+        this.bot.hears(MoodObjectLabelArray, (ctx) => {
             switch(ctx.match) {
-                case MoodEnum.WORRIED:
-                ctx.reply('Take some deep breaths and chillax. I will check on you again in sometime 👍', Markup.removeKeyboard().extra())
-                break
-                case MoodEnum.NEUTRAL:
-                ctx.reply('Keep smiling and stay happy. Hope to see your mood improve over time 🙏🏼', Markup.removeKeyboard().extra())
-                break
-                case MoodEnum.SICK:
-                ctx.reply('Drink plenty of fluids and take some rest. Get well soon 💪🏼', Markup.removeKeyboard().extra())
-                break
-                case MoodEnum.HAPPY:
-                ctx.reply('Wohoooo! That\'s great to hear. Keep spreading the smiles 🎉', Markup.removeKeyboard().extra())
-                break
-                case MoodEnum.DEPRESSED:
-                ctx.reply('Always remember this is a temporary phase. You will fight through it, Champ 🧘🏽‍♂️', Markup.removeKeyboard().extra())
-                break
-                case MoodEnum.EXCITED:
-                ctx.reply('Can\`t wait to hear what\`s new with you 😎 All the best!', Markup.removeKeyboard().extra())
-                break
+                case MoodObject.Excited.label:
+                    ctx.reply('Can\`t wait to hear what\`s new with you 😎 All the best!', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Happy.label:
+                    ctx.reply('Wohoooo! That\'s great to hear. Keep spreading the smiles 🎉', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Normal.label:
+                    ctx.reply('Keep smiling and stay happy. Hope to see your mood improve over time 🙏🏼', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Anxious.label:
+                    ctx.reply('Take some deep breaths and chillax. I will check on you again in sometime 👍', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Stressed.label:
+                    ctx.reply('Always remember this is a temporary phase. You will fight through it, Champ 🧘🏽‍♂️', Markup.removeKeyboard().extra())
+                    break
+                case MoodObject.Sick.label:
+                    ctx.reply('Drink plenty of fluids and take some rest. Get well soon 💪🏼', Markup.removeKeyboard().extra())
+                    break
             }
-            // TODO: Save the mood info in a database
-            console.log(ctx.match);
             this.saveMoodToDatabase(ctx.match);
         })
     }
