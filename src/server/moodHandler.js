@@ -90,7 +90,7 @@ export default class MoodHandler {
 
     askReason() {
         this.bot.on('text', (ctx) => {
-            console.log(ctx.update.message.text);
+            const reason = ctx.update.message.text;
             const mood = ctx.session.mood;
             switch(mood) {
                 case MoodObject.Excited.label:
@@ -112,15 +112,15 @@ export default class MoodHandler {
                     ctx.reply('Drink plenty of fluids and take some rest. Get well soon 💪🏼', Markup.removeKeyboard().extra())
                     break
             }
-            this.saveMoodToDatabase(mood);
+            this.saveMoodToDatabase(mood, reason);
         });
     }
 
-    saveMoodToDatabase(mood) {
+    saveMoodToDatabase(mood,reason) {
         this.database_client = this.connectDatabase();
         const timeZone = DateTime.local().setZone('America/New_York').toString();
-        this.database_client.query('INSERT INTO mood (timestamp, mood) VALUES ($1, $2)',
-            [timeZone, mood],
+        this.database_client.query('INSERT INTO mood (timestamp, mood, reason) VALUES ($1, $2, $3)',
+            [timeZone, mood, reason],
             (err, res) => {
             console.log(err ? err.stack : 'Recorded mood into database!')
             this.disconnectDatabase();

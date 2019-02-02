@@ -8,10 +8,12 @@
     <tr>
         <th>Date/Time</th>
         <th>Mood</th> 
+        <th>Reason</th>
     </tr>
     <tr v-for="mood in data" :key="mood.timestamp">
         <td>{{ mood.timestamp }}</td>
         <td>{{ mood.mood }}</td>
+        <td>{{ mood.reason }}</td>
     </tr>
     </table>
   </div>
@@ -24,6 +26,7 @@ import ApiService from '@/services/ApiService';
 interface Mood {
     timestamp: string;
     mood: string;
+    reason: string;
 }
 
 @Component
