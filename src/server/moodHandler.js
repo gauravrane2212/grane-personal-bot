@@ -2,36 +2,10 @@ import Telegraf from 'telegraf'
 import Markup from 'telegraf/markup'
 import Session from 'telegraf/session'
 import { DateTime } from "luxon";
+import {Moods} from '../constants.ts';
 const { Client } = require('pg');
 
-const MoodObject = {
-    Excited: {
-        label: 'Excited 🤩',
-        value: 6,
-    },
-    Happy: {
-        label: 'Happy 🤠',
-        value: 5,
-    },
-    Normal: {
-        label: 'Normal 😐',
-        value: 4,
-    },
-    Anxious: {
-        label: 'Anxious 😓',
-        value: 3,
-    },
-    Stressed: {
-        label: 'Stressed 🤯',
-        value: 2,
-    },
-    Sick: {
-        label: 'Sick 🤮',
-        value: 1,
-    },
-};
-
-const MoodObjectLabelArray = Object.keys(MoodObject).map((mood) => MoodObject[mood].label);
+const MoodObjectLabelArray = Object.keys(Moods).map((mood) => Moods[mood].value + '|' + Moods[mood].label);
 
 export default class MoodHandler {
     constructor(telegram_token){
@@ -54,73 +28,74 @@ export default class MoodHandler {
 
     sendInitialMoodReply() {
         this.bot.command('mood', (ctx) => ctx.reply('Select one that responds to your mood...', Markup.keyboard([
-            [MoodObject.Excited.label, MoodObject.Happy.label],
-            [MoodObject.Normal.label,  MoodObject.Anxious.label],
-            [MoodObject.Stressed.label, MoodObject.Sick.label]])
-            .oneTime()
-            .resize()
-            .extra()))
+            [Moods.Excited.value + '|' + Moods.Excited.label, Moods.Happy.value + '|' + Moods.Happy.label],
+            [Moods.Normal.value + '|' + Moods.Normal.label, Moods.Anxious.value + '|' + Moods.Anxious.label],
+            [Moods.Stressed.value + '|' + Moods.Stressed.label, Moods.Sick.value + '|' + Moods.Sick.label]
+        ]).oneTime().resize().extra()));
     }
 
     recordMood() {
         this.bot.hears(MoodObjectLabelArray, (ctx) => {
-            switch(ctx.match) {
-                case MoodObject.Excited.label:
+            const moodValuePlusName = ctx.match.split("|");
+            switch(moodValuePlusName[1]) {
+                case Moods.Excited.label:
                     ctx.reply('Awesome News! What\'s new yo?', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Happy.label:
+                case Moods.Happy.label:
                     ctx.reply('Me likey it 😍 What\'s up with you, happy buoy?', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Normal.label:
+                case Moods.Normal.label:
                     ctx.reply('Nice, anything I need to know?', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Anxious.label:
+                case Moods.Anxious.label:
                     ctx.reply('Awww!!! What\'s making you so uneasy?', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Stressed.label:
+                case Moods.Stressed.label:
                     ctx.reply('Keep calm! Keep writing, I am listening, Ok?', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Sick.label:
+                case Moods.Sick.label:
                     ctx.reply('That\'s a bummer! What\'s the status now?', Markup.removeKeyboard().extra())
                     break
             }
-            ctx.session.mood = ctx.match;
+            ctx.session.moodValue = moodValuePlusName[0];
+            ctx.session.moodName = moodValuePlusName[1];
         })
     }
 
     askReason() {
         this.bot.on('text', (ctx) => {
             const reason = ctx.update.message.text;
-            const mood = ctx.session.mood;
-            switch(mood) {
-                case MoodObject.Excited.label:
+            const moodValue = ctx.session.moodValue;
+            const moodName = ctx.session.moodName;
+            switch(moodName) {
+                case Moods.Excited.label:
                     ctx.reply('Now that\'s what I love to hear about you! Keep it rocking, man!', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Happy.label:
+                case Moods.Happy.label:
                     ctx.reply('Wohoooo! That\'s great to hear. Keep spreading the smiles 🎉', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Normal.label:
+                case Moods.Normal.label:
                     ctx.reply('Keep smiling and stay happy. Hope to see your mood improve over time 🙏🏼', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Anxious.label:
+                case Moods.Anxious.label:
                     ctx.reply('Take some deep breaths and chillax. I will check on you again in sometime 👍', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Stressed.label:
+                case Moods.Stressed.label:
                     ctx.reply('Always remember this is a temporary phase. You will fight through it, Champ 🧘🏽‍♂️', Markup.removeKeyboard().extra())
                     break
-                case MoodObject.Sick.label:
+                case Moods.Sick.label:
                     ctx.reply('Drink plenty of fluids and take some rest. Get well soon 💪🏼', Markup.removeKeyboard().extra())
                     break
             }
-            this.saveMoodToDatabase(mood, reason);
+            this.saveMoodToDatabase(moodName, moodValue, reason);
         });
     }
 
-    saveMoodToDatabase(mood,reason) {
+    saveMoodToDatabase(moodName, moodValue, reason) {
         this.database_client = this.connectDatabase();
         const timeZone = DateTime.local().setZone('America/New_York').toString();
-        this.database_client.query('INSERT INTO mood (timestamp, mood, reason) VALUES ($1, $2, $3)',
-            [timeZone, mood, reason],
+        this.database_client.query('INSERT INTO mood (timestamp, mood, reason, value) VALUES ($1, $2, $3, $4)',
+            [timeZone, moodName, reason, moodValue],
             (err, res) => {
             console.log(err ? err.stack : 'Recorded mood into database!')
             this.disconnectDatabase();
