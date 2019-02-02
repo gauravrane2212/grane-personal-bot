@@ -11,6 +11,7 @@ const handler = new MoodHandler(process.env.TELEGRAM_TOKEN);
 handler.setupWebhook();
 handler.sendInitialMoodReply();
 handler.recordMood();
+handler.askReason();
 
 const app = express()
 app.use(cors())
