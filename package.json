@@ -24,7 +24,7 @@
     "luxon": "^1.10.0",
     "nodemon": "^1.18.4",
     "path": "^0.12.7",
-    "pg": "^7.8.0",
+    "pg": "8.6.0",
     "register-service-worker": "^1.0.0",
     "telegraf": "^3.25.0",
     "vue": "^2.5.17",
@@ -53,6 +53,6 @@
     "vue-template-compiler": "^2.5.17"
   },
   "engines": {
-    "node": "8.9.4"
+    "node": "14.15.0"
   }
 }

@@ -17,8 +17,8 @@ export default class MoodHandler {
 
     setupWebhook() {
         // NOTE: Change this to the ngrok one for testing locally.
-        const webhookPath = 'https://grane-personal-bot.herokuapp.com/' + this.token 
-        // const webhookPath = 'https://3db63603.ngrok.io/' + this.token
+        const webhookPath = 'https://grane-personal-bot.herokuapp.com/' + this.token;
+        // const webhookPath = 'https://3db63603.ngrok.io/' + this.token;
         this.bot.telegram.setWebhook(webhookPath);
     }
 
