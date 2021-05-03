@@ -93,7 +93,7 @@ export default class MoodHandler {
 
     saveMoodToDatabase(moodName, moodValue, reason) {
         this.database_client = this.connectDatabase();
-        const timeZone = DateTime.local().setZone('America/New_York').toString();
+        const timeZone = DateTime.local().setZone('America/Los_Angeles').toString();
         this.database_client.query('INSERT INTO mood (timestamp, mood, reason, value) VALUES ($1, $2, $3, $4)',
             [timeZone, moodName, reason, moodValue],
             (err, res) => {
